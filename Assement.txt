@@ -1,0 +1,54 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class StringCalculator {
+    
+    public int add(String numbers) {
+        if (numbers.isEmpty()) {
+            return 0;
+        }
+
+        String delimiter = ",|\n";
+        String numbersPart = numbers;
+
+        if (numbers.startsWith("//")) {
+            int delimiterEndIndex = numbers.indexOf("\n");
+            delimiter = numbers.substring(2, delimiterEndIndex);
+            numbersPart = numbers.substring(delimiterEndIndex + 1);
+        }
+
+        String[] tokens = numbersPart.split(delimiter);
+        return sumNumbers(tokens);
+    }
+
+    private int sumNumbers(String[] tokens) {
+        int sum = 0;
+        List<Integer> negativeNumbers = new ArrayList<>();
+
+        for (String token : tokens) {
+            if (!token.isEmpty()) {
+                int number = Integer.parseInt(token);
+                if (number < 0) {
+                    negativeNumbers.add(number);
+                }
+                sum += number;
+            }
+        }
+
+        if (!negativeNumbers.isEmpty()) {
+            throw new IllegalArgumentException("Negative numbers not allowed: " + negativeNumbers);
+        }
+
+        return sum;
+    }
+
+    public static void main(String[] args) {
+        StringCalculator calculator = new StringCalculator();
+        
+        System.out.println(calculator.add("")); // 0
+        System.out.println(calculator.add("1")); // 1
+        System.out.println(calculator.add("1,5")); // 6
+        System.out.println(calculator.add("1\n2,3")); // 6
+        System.out.println(calculator.add("//;\n1;2")); // 3
+    }
+}
